@@ -1,0 +1,76 @@
+import getpass
+import json
+
+
+class PasswordManager:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.passwords = {}
+
+    def load_passwords(self):
+        try:
+            with open(self.file_path, 'r') as file:
+                self.passwords = json.load(file)
+        except FileNotFoundError:
+            # Если файл не существует, создаем пустой словарь паролей
+            self.passwords = {}
+
+    def save_passwords(self):
+        with open(self.file_path, 'w') as file:
+            json.dump(self.passwords, file)
+
+    def add_password(self):
+        username = input("Enter username: ")
+        password = getpass.getpass("Enter password: ")
+        self.passwords[username] = password
+        self.save_passwords()
+        print("Password added successfully.")
+
+    def remove_password(self):
+        username = input("Enter username: ")
+        if username in self.passwords:
+            del self.passwords[username]
+            self.save_passwords()
+            print("Password removed successfully.")
+        else:
+            print("Password not found.")
+
+    def get_password(self):
+        username = input("Enter username: ")
+        if username in self.passwords:
+            password = self.passwords[username]
+            print(f"Password: {password}")
+        else:
+            print("Password not found.")
+
+
+def main():
+    file_path = "passwords.json"
+    manager = PasswordManager(file_path)
+    manager.load_passwords()
+
+    while True:
+        print("\nMenu:")
+        print("1. Add Password")
+        print("2. Remove Password")
+        print("3. Get Password")
+        print("4. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            manager.add_password()
+        elif choice == "2":
+            manager.remove_password()
+        elif choice == "3":
+            manager.get_password()
+        elif choice == "4":
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+    print("Exiting...")
+
+
+if __name__ == "__main__":
+    main()
